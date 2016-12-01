@@ -9,7 +9,7 @@ object GLINIT {
   glfwInit()
 }
 
-class Window(val renderer: Renderer) extends Thread{
+class Window(rendererWrapper: => Renderer) extends Thread{
   GLINIT
 
   val window = glfwCreateWindow(600, 600, "Physics",
@@ -25,7 +25,7 @@ class Window(val renderer: Renderer) extends Thread{
 
   override def run(): Unit = {
     activate()
-    renderer.init()
+    val renderer = rendererWrapper
     while(!glfwWindowShouldClose(window)){
       renderer.draw()
       glfwSwapBuffers(window)
@@ -45,7 +45,9 @@ class Window(val renderer: Renderer) extends Thread{
 }
 
 object Window {
-  lazy val mWindow = new Window(new EmptyRender())
+  val mWindow = new Window(
+    new EmptyRender()
+  )
   def apply() = {
     mWindow
   }
