@@ -12,6 +12,7 @@ repositories {
 dependencies {
   compile 'org.scala-lang:scala-library:2.11.7'
   testCompile 'org.scalatest:scalatest_2.11:3.0.1'
+  // compile 'com.typesafe.akka:akka-actor_2.11:2.4.14'
 }
 
 import org.gradle.internal.os.OperatingSystem
@@ -50,7 +51,7 @@ dependencies {
 }
 
 task run(type: JavaExec) {
-  main "com.computemachines.physics.Hello"
+  main "com.computemachines.plot.Plot"
   classpath sourceSets.main.runtimeClasspath
   classpath configurations.runtime
 

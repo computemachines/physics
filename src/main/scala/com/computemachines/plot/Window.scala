@@ -23,12 +23,8 @@ class Window(val renderer: Renderer) extends Thread{
       }
     })
 
-  override def start(): Unit = {
-    activate()
-    super.start()
-  }
-
   override def run(): Unit = {
+    activate()
     renderer.init()
     while(!glfwWindowShouldClose(window)){
       renderer.draw()
