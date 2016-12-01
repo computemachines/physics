@@ -4,24 +4,16 @@ import org.lwjgl.glfw._
 import org.lwjgl.glfw.GLFW._
 import org.lwjgl.opengl.GL
 
-class Window {
+
+object GLINIT {
   glfwInit()
-  lazy val window = glfwCreateWindow(600, 600, "Physics",
-    null.asInstanceOf[Int], null.asInstanceOf[Int])
-  glfwMakeContextCurrent(window)
-  glfwSwapInterval(1);
-  GL.createCapabilities();
-  glfwShowWindow(window)
-  def loop(opengl: =>Unit) = {
-    while (!glfwWindowShouldClose(window)) {
-      glfwSwapBuffers(window)
-      glfwPollEvents()
-    }
-    glfwTerminate()
-  }
 }
 
-class EscWindow extends Window {
+class Window(val renderer: Renderer) extends Thread{
+  GLINIT
+
+  val window = glfwCreateWindow(600, 600, "Physics",
+    null.asInstanceOf[Int], null.asInstanceOf[Int])
   glfwSetKeyCallback(window,
     new GLFWKeyCallbackI {
       override def invoke(window: Long, key: Int, scancode: Int,
@@ -30,4 +22,36 @@ class EscWindow extends Window {
           glfwSetWindowShouldClose(window, true)
       }
     })
+
+  override def start(): Unit = {
+    activate()
+    super.start()
+  }
+
+  override def run(): Unit = {
+    renderer.init()
+    while(!glfwWindowShouldClose(window)){
+      renderer.draw()
+      glfwSwapBuffers(window)
+      glfwPollEvents()
+      Thread.sleep(1000)
+      println("tick")
+    }
+    glfwTerminate()
+  }
+
+  def activate() = {
+    glfwMakeContextCurrent(window)
+    glfwSwapInterval(1);
+    GL.createCapabilities();
+    glfwShowWindow(window)
+  }
+}
+
+object Window {
+  lazy val mWindow = new Window(new EmptyRender())
+  def apply() = {
+    mWindow
+  }
+  
 }
