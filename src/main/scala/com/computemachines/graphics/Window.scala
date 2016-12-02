@@ -30,8 +30,6 @@ class Window(rendererWrapper: => Renderer) extends Thread{
       renderer.draw()
       glfwSwapBuffers(window)
       glfwPollEvents()
-      Thread.sleep(1000)
-      println("tick")
     }
     glfwTerminate()
   }

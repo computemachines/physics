@@ -1,4 +1,4 @@
-package com.computemachines.plot
+package com.computemachines.graphics
 
 import scala.io.Source
 import org.lwjgl.opengl.GL20._

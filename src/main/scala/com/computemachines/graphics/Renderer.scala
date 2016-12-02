@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL15._
 import org.lwjgl.opengl.GL20._
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.nativeOrder
+import java.lang.System.currentTimeMillis
 
 trait Renderer {
   def draw(): Unit
@@ -22,6 +23,10 @@ class EmptyRender extends Renderer {
   vertsData.position(0)
 
   val positionAttrib = glGetAttribLocation(program, "position")
+  val timeUniform = glGetUniformLocation(program, "time")
+
+  val time_0 = currentTimeMillis()
+  def time = (currentTimeMillis() - time_0).toFloat/1000
 
   glClearColor(1, 0, 0, 0)
 
@@ -30,6 +35,8 @@ class EmptyRender extends Renderer {
     glUseProgram(program)
     glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, vertsData)
     glEnableVertexAttribArray(positionAttrib)
+    
+    glUniform1f(timeUniform, time)
     glDrawArrays(GL_TRIANGLES, 0, 3)
   }
 }
