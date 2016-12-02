@@ -17,11 +17,14 @@ package object Util {
   }
 
   def makeShader(res: String, shaderType: Int): Int = {
-    val shaderSource = Source.fromFile(resBaseName+res) mkString "\n"
+    val shaderSource = Source.fromFile(resBaseName+res).mkString
     val shader = glCreateShader(shaderType)
     glShaderSource(shader, shaderSource)
+    glCompileShader(shader)
     if(!shaderCompileStatus(shader)) {
-      println(glGetShaderInfoLog(shader))
+      println(s"Shader $res info log: \n" ++glGetShaderInfoLog(shader))
+      println(s"Shader $res source: \n"++shaderSource)
+      System.out.flush()
       throw new ShaderCompileException
     }
     shader
@@ -36,6 +39,7 @@ package object Util {
     glLinkProgram(program)
     if(!programLinkStatus(program)){
       println(glGetProgramInfoLog(program))
+      System.out.flush()
       throw new ProgramLinkException
     }
     program
