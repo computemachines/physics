@@ -1,42 +1,34 @@
-package com.computemachines.plot
+package com.computemachines.graphics
 
 import org.lwjgl.opengl.GL11._
 import org.lwjgl.opengl.GL15._
 import org.lwjgl.opengl.GL20._
-import java.nio.ByteBuffer
-import java.nio.ByteOrder.nativeOrder
-import java.lang.System.currentTimeMillis
 
 trait Renderer {
   def draw(): Unit
 }
 
+
 // must be instantiated in drawing thread
 class EmptyRender extends Renderer {
-  val program = Util.makeProgram("id.vert", "const.frag")
+  val program = SimpleProgram.program
 
-  val verts = Array[Float](0.1f, 0.1f, 1, 0.1f, 1, 1)
-  val vertsData = ByteBuffer.allocateDirect(verts.length * 4)
-    .order(nativeOrder())
-    .asFloatBuffer()
-  vertsData.put(verts)
-  vertsData.position(0)
+  val verts = Array[Float](-1, -1, 1, -1, 1, 1)
+  val mesh: Mesh = new TriangleMesh(2)(verts)
+  mesh.buffer.position(0)
 
-  val positionAttrib = glGetAttribLocation(program, "position")
-  val timeUniform = glGetUniformLocation(program, "time")
+  val aPosition = glGetAttribLocation(program, "a_vec4_position")
+  val uColor = glGetUniformLocation(program, "u_vec4_color")
 
-  val time_0 = currentTimeMillis()
-  def time = (currentTimeMillis() - time_0).toFloat/1000
-
-  glClearColor(1, 0, 0, 0)
+  glClearColor(0, 0, 0, 0)
 
   override def draw() {
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
-    glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, vertsData)
-    glEnableVertexAttribArray(positionAttrib)
+    glVertexAttribPointer(aPosition, 2, GL_FLOAT, false, 0, mesh.buffer)
+    glEnableVertexAttribArray(aPosition)
     
-    glUniform1f(timeUniform, time)
+    glUniform4f(uColor, 1.0f, 0.0f, 0.0f, 1.0f)
     glDrawArrays(GL_TRIANGLES, 0, 3)
   }
 }

@@ -1,4 +1,4 @@
-package com.computemachines.plot
+package com.computemachines.graphics
 
 import org.lwjgl.glfw._
 import org.lwjgl.glfw.GLFW._

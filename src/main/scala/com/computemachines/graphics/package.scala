@@ -29,19 +29,4 @@ package object Util {
     }
     shader
   }
-
-  def makeProgram(vertRes: String, fragRes: String): Int = {
-    val vertex = makeShader(vertRes, GL_VERTEX_SHADER)
-    val fragment = makeShader(fragRes, GL_FRAGMENT_SHADER)
-    val program = glCreateProgram()
-    glAttachShader(program, vertex)
-    glAttachShader(program, fragment)
-    glLinkProgram(program)
-    if(!programLinkStatus(program)){
-      println(glGetProgramInfoLog(program))
-      System.out.flush()
-      throw new ProgramLinkException
-    }
-    program
-  }
 }
