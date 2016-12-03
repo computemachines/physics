@@ -21,6 +21,7 @@ package object Util {
     val shader = glCreateShader(shaderType)
     glShaderSource(shader, shaderSource)
     glCompileShader(shader)
+    println(s"Shader $res info log: \n" ++glGetShaderInfoLog(shader))
     if(!shaderCompileStatus(shader)) {
       println(s"Shader $res info log: \n" ++glGetShaderInfoLog(shader))
       println(s"Shader $res source: \n"++shaderSource)
