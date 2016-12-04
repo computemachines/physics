@@ -18,11 +18,14 @@ class FragmentShader(resource: String) extends
 object PassVertexShader extends VertexShader("id.vert")
 object UniformColorFragmentShader extends FragmentShader("const.frag")
 
-class Program(
-  val vertex: VertexShader,
-  val fragment: FragmentShader) {
-  val program = Program.join(vertex, fragment)
-  def useProgram(): Unit = glUseProgram(program)
+// should extend something like List[Mesh]
+abstract class Program(
+    vertex: VertexShader,
+  fragment: FragmentShader){
+  var meshes = Set[Mesh]()
+  val gl_program: Int = Program.join(vertex, fragment)
+  val attributeTypes: Map[AttributeType, Int]
+  def useProgram(): Unit = glUseProgram(gl_program)
 }
 object Program {
   def join(vertex: VertexShader, fragment: FragmentShader): Int = {
@@ -36,34 +39,5 @@ object Program {
       throw new ProgramLinkException
     }
     program
-  }
-}
-
-class SimpleProgram(val meshes: List[Mesh])
-    extends Program(PassVertexShader, UniformColorFragmentShader) {
-  val aPosition = glGetAttribLocation(program, "a_vec4_position")
-  val uColor = glGetUniformLocation(program, "u_vec4_color")
-  
-  private def bind(mesh: TriangleMesh): Unit = {
-    mesh.buffer.position(0)
-    glVertexAttribPointer(
-      aPosition, mesh.dimension, GL_FLOAT, false, 0, mesh.buffer)
-    glEnableVertexAttribArray(aPosition)
-    return ()
-  }
-
-  def draw() {
-    meshes foreach {
-      case mesh: TriangleMesh => {
-        bind(mesh.asInstanceOf[TriangleMesh])
-        glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.length)
-        return ()
-      }
-      case mesh: Mesh => println("cannot draw "+mesh)
-    }
-  }
-
-  def setUniform() {
-    glUniform4f(uColor, 1, 1, 0, 1)
   }
 }

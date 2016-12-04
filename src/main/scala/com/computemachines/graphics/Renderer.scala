@@ -12,9 +12,10 @@ trait Renderer {
 // must be instantiated in drawing thread
 class EmptyRender extends Renderer {
   val verts = Array[Float](-1, -1, 1, -1, 1, 1)
-  val mesh = new TriangleMesh(2)(verts)
+  val mesh = new SimpleTriangleMesh(2)(verts)
 
-  val program = new SimpleProgram(List(mesh))
+  val program = new SimpleProgram()
+  program.meshes += mesh
   glClearColor(0, 0, 0, 0)
   override def draw() {
     glClear(GL_COLOR_BUFFER_BIT)

@@ -3,6 +3,9 @@ package com.computemachines.graphics
 import scala.io.Source
 import org.lwjgl.opengl.GL20._
 import org.lwjgl.opengl.GL11.GL_TRUE
+import java.nio.ByteBuffer
+import java.nio.FloatBuffer
+import java.nio.ByteOrder.nativeOrder
 
 class ShaderCompileException extends RuntimeException
 class ProgramLinkException extends RuntimeException
@@ -30,4 +33,8 @@ package object Util {
     }
     shader
   }
+  def floatBuffer(floats: Array[Float]): FloatBuffer
+    = ByteBuffer.allocateDirect(floats.length * 4)
+      .order(nativeOrder())
+      .asFloatBuffer().put(floats)
 }
