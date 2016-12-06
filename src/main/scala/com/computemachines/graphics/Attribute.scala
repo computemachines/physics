@@ -7,6 +7,7 @@ import java.nio.ByteOrder.nativeOrder
 
 abstract class AttributeType
 object Position extends AttributeType
+object UVCoords extends AttributeType
 
 case class Attribute(
   attributeType: AttributeType,

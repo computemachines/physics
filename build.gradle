@@ -12,6 +12,8 @@ repositories {
 dependencies {
   compile 'org.scala-lang:scala-library:2.11.7'
   testCompile 'org.scalatest:scalatest_2.11:3.0.1'
+// https://mvnrepository.com/artifact/ar.com.hjg/pngj
+  compile group: 'ar.com.hjg', name: 'pngj', version: '2.1.0'
   // compile 'com.typesafe.akka:akka-actor_2.11:2.4.14'
 }
 
