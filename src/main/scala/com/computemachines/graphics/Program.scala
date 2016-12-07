@@ -14,21 +14,22 @@ abstract class Program(
   fragment: FragmentShader){
   var meshes = Set[Mesh]()
   val gl_program: Int = Program.join(vertex, fragment)
-  val attributeTypes: Map[AttributeType, Int]
+  val attributeOf: Map[AttributeType, Int]
+  val uniformOf: Map[UniformType, Int]
   def useProgram(): Unit = glUseProgram(gl_program)
   private def vertexAttrib(buffer: FloatBuffer, attribute: Attribute): Unit =
     attribute match {
       case Attribute(attributeType, components, gl_type, start, stride) => {
         buffer.position(start)
         glVertexAttribPointer(
-          attributeTypes(attributeType),
+          attributeOf(attributeType),
           components,
           gl_type,
           false,
           stride,
           buffer
         )
-        glEnableVertexAttribArray(attributeTypes(attributeType))
+        glEnableVertexAttribArray(attributeOf(attributeType))
       }
     }
 
@@ -38,6 +39,11 @@ abstract class Program(
 
   def draw() {
     for (mesh <- meshes) {
+      vertexAttrib(mesh)
+      mesh match {
+        case mesh: TextureMesh => glUniform1i(uniformOf(Texture2DUniform), mesh.texture.unit.index)
+        case _ => Unit
+      }
       mesh.draw()
     }
   }

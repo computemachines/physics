@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
   compile 'org.scala-lang:scala-library:2.11.7'
+  compile "org.scala-lang:scala-compiler:2.11.7"
   testCompile 'org.scalatest:scalatest_2.11:3.0.1'
 // https://mvnrepository.com/artifact/ar.com.hjg/pngj
   compile group: 'ar.com.hjg', name: 'pngj', version: '2.1.0'
@@ -63,4 +64,13 @@ task run(type: JavaExec) {
 task natives(type: Copy) {
   from configurations.runtime
   into 'natives'
+}
+
+task repl(type:JavaExec) {
+  main = "scala.tools.nsc.MainGenericRunner"
+  classpath = sourceSets.main.runtimeClasspath
+  classpath configurations.runtime
+  systemProperty "java.library.path", "/home/tparker/projects/physics/natives/"
+  standardInput System.in
+  args '-usejavacp'
 }

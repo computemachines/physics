@@ -13,18 +13,13 @@ import java.nio.ByteOrder.nativeOrder
 
 import ar.com.hjg.pngj._
 
-class Texture(val pixels: ByteBuffer, val width: Int, val height: Int, val channels: Int) {
+abstract class TextureUnit(val gl_label: Int, val index: Int)
+object TextureUnit0 extends TextureUnit(GL_TEXTURE0, 0)
+
+class Texture2D(val unit: TextureUnit)(val pixels: ByteBuffer, val width: Int, val height: Int, val channels: Int) {
   val gl_texture: Int = glGenTextures()
-  def check() {
-    val error = glGetError()
-    if(error != GL_NO_ERROR) {
-      println(s"glGetError() = $error")
-      System.out.flush()
-      throw new RuntimeException()
-    }
-  }
-  def init() {
-    glActiveTexture(GL_TEXTURE0)
+  def bufferTexture() {
+    glActiveTexture(unit.gl_label)
     withBinding {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -39,11 +34,11 @@ class Texture(val pixels: ByteBuffer, val width: Int, val height: Int, val chann
   }
 }
 
-object Texture {
-  def apply(resource: String): Texture = {
+object Texture2D {
+  def apply(resource: String): Texture2D = {
     val args = loadImage(resource)
-    val tex = new Texture(args._1, args._2._1, args._2._2, args._2._3)
-    tex.init()
+    val tex = new Texture2D(TextureUnit0)(args._1, args._2._1, args._2._2, args._2._3)
+    tex.bufferTexture()
     tex
   }
   def loadImage(resource: String): (ByteBuffer, (Int, Int, Int)) =  {

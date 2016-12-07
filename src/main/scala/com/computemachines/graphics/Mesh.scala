@@ -12,10 +12,13 @@ import java.nio.ByteOrder.nativeOrder
 abstract class Mesh(val buffer: FloatBuffer, val attributes: List[Attribute]) {
   val numVertices: Int
   def gl_drawType: Int
-  var textures = Set[Texture]()
   def draw() {
-    textures.foreach(_ withBinding { glDrawArrays(gl_drawType, 0, numVertices) })
+    glDrawArrays(gl_drawType, 0, numVertices)
   }
+}
+
+abstract class TextureMesh(buffer: FloatBuffer, attributes: List[Attribute]) extends Mesh(buffer, attributes) {
+  val texture: Texture2D
 }
 
 trait Triangles {
@@ -35,8 +38,8 @@ class SimpleSquare extends SimpleTriangleMesh(2)(
     -1, -1, 1, 1, -1, 1)
 )
 
-class TextureTriangleMesh(val dimension: Int)(data: Array[Float])
-    extends Mesh(Util.floatBuffer(data),
+class TextureTriangleMesh(val dimension: Int)(data: Array[Float])(val texture: Texture2D)
+    extends TextureMesh(Util.floatBuffer(data),
       List(
         Attribute(Position, dimension, GL_FLOAT, 0, (dimension+2)*4),
         Attribute(UVCoords, 2, GL_FLOAT, dimension, (dimension+2)*4)
@@ -45,7 +48,7 @@ class TextureTriangleMesh(val dimension: Int)(data: Array[Float])
   override val numVertices = (data.length/(dimension+2)).toInt
 }
 
-class TextureSquare extends TextureTriangleMesh(2)(
+class DefaultTextureSquare extends TextureTriangleMesh(2)(
   Array[Float](
     -1, -1, 0, 0,
     1, -1,  1, 0,
@@ -53,6 +56,4 @@ class TextureSquare extends TextureTriangleMesh(2)(
     -1, -1, 0, 0,
     1, 1,   1, 1,
     -1, 1,  0, 1)
-) {
-  textures += Texture("basn6a08.png")
-}
+)(Texture2D("basn6a08.png"))

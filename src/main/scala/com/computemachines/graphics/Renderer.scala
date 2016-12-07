@@ -16,7 +16,7 @@ class EmptyRender extends Renderer {
   // val mesh = new SimpleTriangleMesh(2)(verts)
 
   glEnable(GL_TEXTURE_2D)
-  val square = new TextureSquare()
+  val square = new DefaultTextureSquare()
 
   val program = new MVPTextureProgram
   program.meshes += square
@@ -26,7 +26,6 @@ class EmptyRender extends Renderer {
   
   override def draw() {
     glClear(GL_COLOR_BUFFER_BIT)
-    glUniform1i(program.gl_textureUnit, 0)
-    square.draw()
+    program.draw()
   }
 }
