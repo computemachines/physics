@@ -8,7 +8,9 @@ import org.lwjgl.opengl.GL20._
 import com.computemachines.graphics.Util._
 
 
-// should extend something like List[Mesh]
+// wraps program on the gl.
+// contains all meshes to be drawn with this program.
+// can draw any mesh type.
 abstract class Program(
   vertex: VertexShader,
   fragment: FragmentShader){
@@ -16,35 +18,44 @@ abstract class Program(
   val gl_program: Int = Program.join(vertex, fragment)
   val attributeOf: Map[AttributeType, Int]
   val uniformOf: Map[UniformType, Int]
+
   def useProgram(): Unit = glUseProgram(gl_program)
-  private def vertexAttrib(buffer: FloatBuffer, attribute: Attribute): Unit =
-    attribute match {
+
+  // align per vertex attributes with buffer in client memory
+  def vertexAttrib(mesh: Mesh) {
+    mesh.attributes foreach {
       case Attribute(attributeType, components, gl_type, start, stride) => {
-        buffer.position(start)
+        mesh.buffer.position(start)
+
         glVertexAttribPointer(
           attributeOf(attributeType),
           components,
           gl_type,
           false,
           stride,
-          buffer
+          mesh.buffer
         )
         glEnableVertexAttribArray(attributeOf(attributeType))
       }
     }
-
-  def vertexAttrib(mesh: Mesh) {
-    mesh.attributes foreach { vertexAttrib(mesh.buffer, _) }
   }
 
   def draw() {
+    useProgram()
     for (mesh <- meshes) {
       vertexAttrib(mesh)
       mesh match {
-        case mesh: TextureMesh => glUniform1i(uniformOf(Texture2DUniform), mesh.texture.unit.index)
-        case _ => Unit
+        case mesh: TextureMesh => {
+          glUniform1i(uniformOf(Texture2DUniform), mesh.texture.unit.index)
+
+          glBindTexture(GL_TEXTURE_2D, mesh.texture.gl_texture)
+          glDrawArrays(mesh.gl_drawType, 0, mesh.numVertices)
+          glBindTexture(GL_TEXTURE_2D, 0)
+        }
+        case _ => {
+          glDrawArrays(mesh.gl_drawType, 0, mesh.numVertices)
+        }
       }
-      mesh.draw()
     }
   }
 }

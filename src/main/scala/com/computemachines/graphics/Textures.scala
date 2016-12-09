@@ -14,22 +14,23 @@ import java.nio.ByteOrder.nativeOrder
 import ar.com.hjg.pngj._
 
 abstract class TextureUnit(val gl_label: Int, val index: Int)
+object TextureUnit {
+  def apply(index: Int): TextureUnit = index match {
+    case 0 => TextureUnit0
+  }
+}
 object TextureUnit0 extends TextureUnit(GL_TEXTURE0, 0)
 
 class Texture2D(val unit: TextureUnit)(val pixels: ByteBuffer, val width: Int, val height: Int, val channels: Int) {
   val gl_texture: Int = glGenTextures()
   def bufferTexture() {
     glActiveTexture(unit.gl_label)
-    withBinding {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels)
-    }
-  }
-  def withBinding(op: => Unit) {
     glBindTexture(GL_TEXTURE_2D, gl_texture)
-    op
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    pixels.position(0)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels)
     glBindTexture(GL_TEXTURE_2D, 0)
   }
 }
@@ -37,7 +38,7 @@ class Texture2D(val unit: TextureUnit)(val pixels: ByteBuffer, val width: Int, v
 object Texture2D {
   def apply(resource: String): Texture2D = {
     val args = loadImage(resource)
-    val tex = new Texture2D(TextureUnit0)(args._1, args._2._1, args._2._2, args._2._3)
+    val tex = new Texture2D(TextureUnit(0))(args._1, args._2._1, args._2._2, args._2._3)
     tex.bufferTexture()
     tex
   }

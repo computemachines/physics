@@ -12,17 +12,12 @@ trait Renderer {
 
 // must be instantiated in drawing thread
 class EmptyRender extends Renderer {
-  // val verts = Array[Float](-1, -1, 1, -1, 1, 1)
-  // val mesh = new SimpleTriangleMesh(2)(verts)
-
   glEnable(GL_TEXTURE_2D)
-  val square = new DefaultTextureSquare()
+  val square = new TestTextureSquare()
 
   val program = new MVPTextureProgram
   program.meshes += square
   glClearColor(0, 0, 0, 0)
-  program.useProgram()
-  program.vertexAttrib(square)
   
   override def draw() {
     glClear(GL_COLOR_BUFFER_BIT)

@@ -9,12 +9,11 @@ import java.nio.ByteOrder.nativeOrder
 
 // Meshes only care about attributes. They do not care about uniforms.
 
+// Meshes should not have any draw commands
+
 abstract class Mesh(val buffer: FloatBuffer, val attributes: List[Attribute]) {
   val numVertices: Int
   def gl_drawType: Int
-  def draw() {
-    glDrawArrays(gl_drawType, 0, numVertices)
-  }
 }
 
 abstract class TextureMesh(buffer: FloatBuffer, attributes: List[Attribute]) extends Mesh(buffer, attributes) {
@@ -56,4 +55,13 @@ class DefaultTextureSquare extends TextureTriangleMesh(2)(
     -1, -1, 0, 0,
     1, 1,   1, 1,
     -1, 1,  0, 1)
-)(Texture2D("basn6a08.png"))
+)(Texture2D("quad_test.png"))
+class TestTextureSquare extends TextureTriangleMesh(2)(
+  Array[Float](
+    -1, -1, 0, 1,
+    1, -1,  1, 1,
+    1, 1,   1, 0,
+    -1, -1, 0, 1,
+    1, 1,   1, 0,
+    -1, 1,  0, 0)
+)(Texture2D("test.png"))
