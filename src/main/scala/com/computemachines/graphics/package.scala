@@ -34,7 +34,13 @@ package object Util {
     shader
   }
   def floatBuffer(floats: Array[Float]): FloatBuffer
-    = ByteBuffer.allocateDirect(floats.length * 4)
+  = ByteBuffer.allocateDirect(floats.length * 4)
+    .order(nativeOrder())
+    .asFloatBuffer().put(floats)
+  def byteBuffer(floats: Array[Float]): ByteBuffer = {
+    val bytes = ByteBuffer.allocateDirect(floats.length * 4)
       .order(nativeOrder())
-      .asFloatBuffer().put(floats)
+    floats foreach {bytes.putFloat(_)}
+    bytes
+  }
 }

@@ -11,5 +11,5 @@ main()
 {
   v_vec2_texCoord = a_vec2_texCoord;
   //gl_Position = u_mat4_mvp * a_vec4_position;
-  gl_Position = a_vec4_position + vec4(0.1, 0.1, 0, 0);
+  gl_Position = a_vec4_position;
 }
