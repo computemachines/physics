@@ -37,7 +37,7 @@ class SimpleSquare extends SimpleTriangleMesh(2)(
     -1, -1, 1, 1, -1, 1)
 )
 
-class TextureTriangleMesh(val dimension: Int)(data: Array[Float])(override val texture: ImageTexture2D)
+class TextureTriangleMesh(val dimension: Int)(data: Array[Float])(val texture: Texture)
     extends TextureMesh(Util.floatBuffer(data),
       List(
         Attribute(Position, dimension, GL_FLOAT, 0, (dimension+2)*4),
@@ -47,17 +47,7 @@ class TextureTriangleMesh(val dimension: Int)(data: Array[Float])(override val t
   override val numVertices = (data.length/(dimension+2)).toInt
 }
 
-// class GaussianTextureSquare extends TextureTriangleMesh(2)(
-//   Array[Float](
-//     -1, -1, 0, 0,
-//     1, -1,  1, 0,
-//     1, 1,   1, 1,
-//     -1, -1, 0, 0,
-//     1, 1,   1, 1,
-//     -1, 1,  0, 1)
-// )(GaussianPlot2DTexture())
-
-class TestTextureSquare extends TextureTriangleMesh(2)(
+class DefaultTextureSquare(texture: Texture) extends TextureTriangleMesh(2)(
   Array[Float](
     -1, -1, 0, 1,
     1, -1,  1, 1,
@@ -65,4 +55,8 @@ class TestTextureSquare extends TextureTriangleMesh(2)(
     -1, -1, 0, 1,
     1, 1,   1, 0,
     -1, 1,  0, 0)
-)(ImageTexture2D("test.png"))
+)(texture)
+
+class GaussianTextureSquare extends DefaultTextureSquare(GaussianPlot2DTexture())
+
+class TestTextureSquare extends DefaultTextureSquare(ImageTexture2D("test.png"))

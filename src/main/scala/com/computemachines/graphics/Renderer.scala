@@ -13,7 +13,7 @@ trait Renderer {
 // must be instantiated in drawing thread
 class EmptyRender extends Renderer {
   glEnable(GL_TEXTURE_2D)
-  val square = new TestTextureSquare()
+  val square = new GaussianTextureSquare()
 
   val program = new MVPTextureProgram
   program.meshes += square

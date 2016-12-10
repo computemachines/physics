@@ -13,20 +13,6 @@ import java.nio.ByteOrder.nativeOrder
 
 import ar.com.hjg.pngj._
 
-// class ImageTexture2D(val unit: TextureUnit)(val pixels: ByteBuffer, val width: Int, val height: Int, val channels: Int) extends Texture{
-//   override val gl_texture: Int = glGenTextures()
-//   def bufferTexture() {
-//     glActiveTexture(unit.gl_label)
-//     glBindTexture(GL_TEXTURE_2D, gl_texture)
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-
-//     pixels.position(0)
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels)
-//     glBindTexture(GL_TEXTURE_2D, 0)
-//   }
-// }
-
 case class Image2D(
   val pixels: ByteBuffer,
   val gl_format: Int,
@@ -43,7 +29,7 @@ class ImageTexture2D(override val unit: TextureUnit,
 
   bind()
   glTexParameteri(gl_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-  glTexParameteri(gl_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+  glTexParameteri(gl_type, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
   image.pixels.position(0)
   glTexImage2D(gl_type, 0, GL_RGBA, image.width, image.height, 0,
